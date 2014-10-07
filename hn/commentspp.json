@@ -1,0 +1,213 @@
+{
+  "id": "3338485",
+  "title": "Lamest bug we ever encountered",
+  "url": "http://joostdevblog.blogspot.com/2011/12/lamest-bug-we-ever-encountered.html",
+  "domain": "joostdevblog.blogspot.com",
+  "points": 76,
+  "user": "exch",
+  "time_ago": "1024 days ago",
+  "comments_count": 0,
+  "content": null,
+  "poll": null,
+  "type": "link",
+  "comments": [
+    {
+      "id": "3338903",
+      "level": 0,
+      "user": "akg",
+      "time_ago": "1024 days ago",
+      "content": "<p>Reminds me of the time I had written a physical simulation engine back in grad school and there was a \"minus\" sign error. Of course, the error was rare enough that we didn't notice it until after the code was used in a real production environment. Tracking down one minus sign in several hundred thousands of lines is a pain. Not to mention the uneasy feeling you get after you solve it, \"How was everything ever working correctly before!? What else did we overlook?\"",
+      "comments": [
+        {
+          "id": "3339842",
+          "level": 1,
+          "user": "Confusion",
+          "time_ago": "1023 days ago",
+          "content": "<p>If I have to venture a guess, I guess you didn't have a comprehensive set of tests at the function/method level of the code? Having that would probably have caught the bug, because you would have written a test for correctly executing the code in that branch.",
+          "comments": [
+            {
+              "id": "3340746",
+              "level": 2,
+              "user": "akg",
+              "time_ago": "1023 days ago",
+              "content": "<p>You're right. But it was after that pain-staking experience that I became fully engrossed in using unittests for all non-trivial functionality. Live and learn.",
+              "comments": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3338875",
+      "level": 0,
+      "user": "AndyKelley",
+      "time_ago": "1024 days ago",
+      "content": "<p>I'm not completely satisfied by the explanation. I still have that uneasy feeling that you get when you solve a bug, but an unsolved mystery remains. \"Also, I still don't know why not all consoles connected to that PC froze.\"",
+      "comments": [
+        {
+          "id": "3339264",
+          "level": 1,
+          "user": "radarsat1",
+          "time_ago": "1023 days ago",
+          "content": "<p>He didn't mention how the logging was done but if it was over a TCP connection then the send() call probably blocked until it timed out since the sleeping computer didn't close the socket nicely, then it had to re-establish the connection.  Although reliability is nice, if I were writing a remote logger for a something like a game, I think I'd use UDP.",
+          "comments": [
+            {
+              "id": "3339643",
+              "level": 2,
+              "user": "Nick_C",
+              "time_ago": "1023 days ago",
+              "content": "<p>&gt; although reliability is nice ... UDP<p>Would you not use send() with MSG_DONTWAIT?  You get the reliability of TCP and you get feedback if there is any potential blocking.  (But I certainly am not a socket guru.)<p>",
+              "comments": [
+                {
+                  "id": "3340481",
+                  "level": 3,
+                  "user": "radarsat1",
+                  "time_ago": "1023 days ago",
+                  "content": "<p>Definitely, asserting non-blocking flags for the socket options is also a good idea.",
+                  "comments": []
+                }
+              ]
+            },
+            {
+              "id": "3339445",
+              "level": 2,
+              "user": "AndyKelley",
+              "time_ago": "1023 days ago",
+              "content": "<p>Are you trying to explain how it's possible for some of the consoles to freeze but others not while talking to the same sleeping computer? If so, I did not understand your explanation.",
+              "comments": [
+                {
+                  "id": "3339447",
+                  "level": 3,
+                  "user": "alexgartrell",
+                  "time_ago": "1023 days ago",
+                  "content": "<p>I believe socket writes don't block until you've filled the internal socket buffer, so it's likely that the unaffected machines simply hadn't done this yet.",
+                  "comments": [
+                    {
+                      "id": "3340981",
+                      "level": 4,
+                      "user": "AndyKelley",
+                      "time_ago": "1023 days ago",
+                      "content": "<p>ah, there's the missing piece of information. Now I got it, thanks.",
+                      "comments": []
+                    }
+                  ]
+                },
+                {
+                  "id": "3340482",
+                  "level": 3,
+                  "user": "radarsat1",
+                  "time_ago": "1023 days ago",
+                  "content": "<p>It's just a hypothesis.  Obviously I don't have enough information to know for sure.",
+                  "comments": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3338808",
+      "level": 0,
+      "user": "botker",
+      "time_ago": "1024 days ago",
+      "content": "<p>I'm reminded of this story of the folks who worked on LEO hunting down a similarly difficult-to-find bug that was eventually found to be caused by an unrelated external machine: the manager's elevator. <a href=\"https://www.youtube.com/watch?v=Lrn24SdW64I&amp;t=2m50s\" rel=\"nofollow\">https://www.youtube.com/watch?v=Lrn24SdW64I&amp;t=2m50s</a>",
+      "comments": []
+    },
+    {
+      "id": "3338968",
+      "level": 0,
+      "user": "einhverfr",
+      "time_ago": "1024 days ago",
+      "content": "<p>I once spent an afternoon tracking down a \"bug\" as to why sales tax wasn't being calculated on LedgerSMB only to find out I had set the tax rate to 0 in the tax interface....  Ok, it was working as intended.  I felt pretty sheepish too.",
+      "comments": [
+        {
+          "id": "3339004",
+          "level": 1,
+          "user": "decadentcactus",
+          "time_ago": "1024 days ago",
+          "content": "<p>The worst bugs are when things work as intended, but you still think it's a bug, such as your example.",
+          "comments": [
+            {
+              "id": "3339080",
+              "level": 2,
+              "user": "Natsu",
+              "time_ago": "1024 days ago",
+              "content": "<p>It's worse when your users find these and are all mad because the computer did exactly what they told them to.",
+              "comments": [
+                {
+                  "id": "3339165",
+                  "level": 3,
+                  "user": "einhverfr",
+                  "time_ago": "1023 days ago",
+                  "content": "<p>The problem in my case is that sales tax calculation easily qualifies as a big deal and so any sense that it's not working raises all sorts of alarm bells.  In addition to the immediate questions of \"are production versions affected?  If so what do we tell customers?\"<p>Also taxes with a rate of 0 are ignored specifically because sometimes sales tax structures change (as with HST consolidation in Canada) and consequently old taxes need to be retired.....<p>",
+                  "comments": []
+                },
+                {
+                  "id": "3339174",
+                  "level": 3,
+                  "user": "AndyKelley",
+                  "time_ago": "1023 days ago",
+                  "content": "<p>Nah, then it's a bug in your user interface.",
+                  "comments": [
+                    {
+                      "id": "3339281",
+                      "level": 4,
+                      "user": "einhverfr",
+                      "time_ago": "1023 days ago",
+                      "content": "<p>While I am sympathetic to this argument, I would say that is not always the case.  Some configuration issues are usually required and when something is set up for a specific case, and it behaves for that case, and the user simply forgot that this is what they did, then it's a bug only in the storage retrival routines of the user's own memory.",
+                      "comments": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3339723",
+      "level": 0,
+      "user": "TwoBit",
+      "time_ago": "1023 days ago",
+      "content": "<p>They could have solved that bug with one developer in ten minutes by just telling the PS3 to generate a core dump and running addr2line.exe on the core dump report's callstacks.<p>And the report places the blame on the server instead of their code. Clearly it's their code's fault for doing blocking sockets calls in a main thread.<p>",
+      "comments": []
+    },
+    {
+      "id": "3338716",
+      "level": 0,
+      "user": "zitterbewegung",
+      "time_ago": "1024 days ago",
+      "content": "<p>This looks like an interesting bug. I wonder if there are more bugs like this from the website view such as analytic tools giving you false or misleading information? Or, even monitoring or performance tools?",
+      "comments": []
+    },
+    {
+      "id": "3339263",
+      "level": 0,
+      "user": "simoncpu",
+      "time_ago": "1023 days ago",
+      "content": "<p>The lamest bug you will ever encounter deletes your whole /usr.",
+      "comments": [
+        {
+          "id": "3339716",
+          "level": 1,
+          "user": "manojlds",
+          "time_ago": "1023 days ago",
+          "content": "<p>How is that lame?",
+          "comments": [
+            {
+              "id": "3339928",
+              "level": 2,
+              "user": "narcissus",
+              "time_ago": "1023 days ago",
+              "content": "<p>I think he's talking about this <a href=\"https://github.com/MrMEEE/bumblebee/commit/a047be85247755cdbe0acce6f1dafc8beb84f2ac#diff-1\" rel=\"nofollow\">https://github.com/MrMEEE/bumblebee/commit/a047be85247755cdb...</a> , where the deletion of /usr was not on purpose... the bug was a space in the middle of a file path in the install script.",
+              "comments": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "more_comments_id": null
+}

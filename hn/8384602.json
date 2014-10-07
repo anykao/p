@@ -1,0 +1,338 @@
+{
+  "id": "8384602",
+  "title": "T – a command-line power tool for Twitter",
+  "url": "http://sferik.github.io/t/",
+  "domain": "sferik.github.io",
+  "points": 116,
+  "user": "lelf",
+  "time_ago": "7 hours ago",
+  "comments_count": 38,
+  "content": null,
+  "poll": null,
+  "type": "link",
+  "comments": [
+    {
+      "id": "8384889",
+      "level": 0,
+      "user": "jhallenworld",
+      "time_ago": "6 hours ago",
+      "content": "<p>At WPI, in 1989, we had 's'- a command line tool (written in ksh!) to send a message to someone or to your friends logged in.  You had a .friends file and a .enemies file (to blacklist people from contacting you).  We also had \"superwho\" which gave a graphical map (vt220 graphics) of where everyone was.<p>Now 25 years later we finally have 'T'!  Progress..<p>",
+      "comments": [
+        {
+          "id": "8385786",
+          "level": 1,
+          "user": "m0nastic",
+          "time_ago": "3 hours ago",
+          "content": "<p>By 1998 (when I was there), I don't remember ever seeing anything like that (we used normal Unix 'talk' to communicate with people logged into the Digital Unix servers).<p>Go Engineers!<p>",
+          "comments": [
+            {
+              "id": "8385871",
+              "level": 2,
+              "user": "jhallenworld",
+              "time_ago": "3 hours ago",
+              "content": "<p>There was a burst of hacking because of the final transition to UNIX.  I was privileged to experience the much more diverse before time: A DECSYSTEM-20 was the main campus computer (it used a Z-80/S100 bus custom terminal multiplexer), the OS course involved writing an OS in PDP-11/23 assembly language, you could write your documents using the Wang word processing computer, of course there were VAXen and there was even an IBM mainframe.  There were some UNIX machines (3B2s..), but everything changed when the DEC-20 was replaced with an Encore Multimax and Decstation-2100s (I remember \"xtank\" was a popular multiplayer game on them).<p>I could see the vestiges of the previous burst of hacking in the DEC-20's student written software library.<p>The popularity of the messaging programs should have been a big hint to us..<p>",
+              "comments": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "8385039",
+      "level": 0,
+      "user": "danso",
+      "time_ago": "5 hours ago",
+      "content": "<p>One of my favorite tools...in fact, I'd argue that T is what got me to finally understand why, as a programmer, I should still care about CLI (sferik maintains both T and the excellent Ruby twitter client gem, which powers T)...Studying the T code has also helped me understand the principles of a good CLI system...all around, a well-maintained and fun project.<p>Using the `--csv` flag and a command-line tool like csvkit, you can make all sorts of utilities. Here's how to unfollow everyone who doesn't follow you:<p><pre><code>       t leaders --csv | csvcut -c 9 | xargs t unfollow\n</code></pre>\nUnfollowing everyone who hasn't tweeted since the first half of 2013:<p><pre><code>       t followings --csv | csvgrep -c 3 -r '2013-0[1-6]' | csvcut -c 9 | xargs t unfollow\n\n</code></pre>\nNote: I haven't run these in awhile so the field order may have changed...",
+      "comments": [
+        {
+          "id": "8385841",
+          "level": 1,
+          "user": "rdc12",
+          "time_ago": "3 hours ago",
+          "content": "<p>Looking at some of the examples the csv part is unneeded in the first example.<p>t leaders | xargs t unfollow  #will work<p>",
+          "comments": [
+            {
+              "id": "8386164",
+              "level": 2,
+              "user": "danso",
+              "time_ago": "1 hour ago",
+              "content": "<p>Oops, you're right. That was a vestigial step for when I was filtering the list by some standard (e.g. less/greater than certain number of followers) and then unfollowing.",
+              "comments": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "8384643",
+      "level": 0,
+      "user": "malvosenior",
+      "time_ago": "7 hours ago",
+      "content": "<p>Favorite T hack:<p><pre><code>  t followers --sort=since &gt; followers.log\n</code></pre>\nKeep followers.log checked into Git and track your followers/unfollowers over time.",
+      "comments": [
+        {
+          "id": "8384769",
+          "level": 1,
+          "user": "ahmett",
+          "time_ago": "6 hours ago",
+          "content": "<p>I have the following project for this. <a href=\"https://github.com/ahmetalpbalkan/goodbye\" rel=\"nofollow\">https://github.com/ahmetalpbalkan/goodbye</a> It can DM you when someone unfollows you. But you need to host it somewhere.",
+          "comments": []
+        },
+        {
+          "id": "8384772",
+          "level": 1,
+          "user": "zem",
+          "time_ago": "6 hours ago",
+          "content": "<p>tempting, but i feel that tracking who unfollows me would only annoy me for no good reason.",
+          "comments": []
+        },
+        {
+          "id": "8385061",
+          "level": 1,
+          "user": "ryanseys",
+          "time_ago": "5 hours ago",
+          "content": "<p>I made a thing yesterday to do just that. :)<p><a href=\"https://github.com/ryanseys/twidiff\" rel=\"nofollow\">https://github.com/ryanseys/twidiff</a><p>",
+          "comments": [
+            {
+              "id": "8386352",
+              "level": 2,
+              "user": "D4AHNGM",
+              "time_ago": "40 minutes ago",
+              "content": "<p>That's a nice simple little script. Thanks for sharing!",
+              "comments": []
+            }
+          ]
+        },
+        {
+          "id": "8384805",
+          "level": 1,
+          "user": "chimeracoder",
+          "time_ago": "6 hours ago",
+          "content": "<p>No need to use git, since you can just use diff(1) to find the unfollowers between any two dates. I've been doing this for a while with a Go program I created[0].<p>Unfortunately, people who change their Twitter handles (which I found surprisingly common) show up as false positives - you either need to filter these out manually or match against the user id[1].<p>[0] <a href=\"https://github.com/ChimeraCoder/twitter-follower-logger\" rel=\"nofollow\">https://github.com/ChimeraCoder/twitter-follower-logger</a><p>[1] Adding that as a separate field and then calling `cut -f2` would be a quick hack, now that I think about it.<p>",
+          "comments": [
+            {
+              "id": "8384849",
+              "level": 2,
+              "user": "gknoy",
+              "time_ago": "6 hours ago",
+              "content": "<p>True, but git comes with many tools (e.g. gitk) that make it really easy to the diffs-over-time of a repo.",
+              "comments": []
+            }
+          ]
+        },
+        {
+          "id": "8384673",
+          "level": 1,
+          "user": "misiti3780",
+          "time_ago": "6 hours ago",
+          "content": "<p>that is a really great idea",
+          "comments": [
+            {
+              "id": "8384724",
+              "level": 2,
+              "user": "malvosenior",
+              "time_ago": "6 hours ago",
+              "content": "<p>Thanks!",
+              "comments": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "8384707",
+      "level": 0,
+      "user": "_delirium",
+      "time_ago": "6 hours ago",
+      "content": "<p>This is another one I've used, with a somewhat different set of functionality: <a href=\"http://www.floodgap.com/software/ttytter/\" rel=\"nofollow\">http://www.floodgap.com/software/ttytter/</a>",
+      "comments": [
+        {
+          "id": "8386344",
+          "level": 1,
+          "user": "privong",
+          "time_ago": "42 minutes ago",
+          "content": "<p>I really liked ttytter. I got to where I preferred it over any graphical clients – the information density was so much higher in the console. Sadly it has not been updated in a while (and I have since left twitter).",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "id": "8385501",
+      "level": 0,
+      "user": "eps",
+      "time_ago": "4 hours ago",
+      "content": "<p>Does anyone else remember micq, a command line ICQ client? It was such a beaut.",
+      "comments": [
+        {
+          "id": "8385952",
+          "level": 1,
+          "user": "jcurbo",
+          "time_ago": "2 hours ago",
+          "content": "<p>Indeed! I used micq for several years back in the late 90's.",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "id": "8386356",
+      "level": 0,
+      "user": "D4AHNGM",
+      "time_ago": "39 minutes ago",
+      "content": "<p>This is neat. I had no idea it existed. Forever in love with the power &amp; simplicity of Ruby.",
+      "comments": []
+    },
+    {
+      "id": "8384962",
+      "level": 0,
+      "user": "lnanek2",
+      "time_ago": "6 hours ago",
+      "content": "<p>Usually this would be banned because it acts as a Twitter client and doesn't show the ads. In this case you have to sign up for your own app ID, though, so it will just be banned piece by piece as the Twitter API enforcement bots catch each instance. I had a lot of apps seemingly auto-killed by Twitter, games that used to use the API to let you Tweet scores easily, mostly, so expect this app will be similarly classified.",
+      "comments": [
+        {
+          "id": "8385248",
+          "level": 1,
+          "user": "sp332",
+          "time_ago": "5 hours ago",
+          "content": "<p>There are other rules this is breaking. <a href=\"https://dev.twitter.com/overview/terms/rules-of-the-road\" rel=\"nofollow\">https://dev.twitter.com/overview/terms/rules-of-the-road</a><p>You must:<p>4. not arrange for your Service to be pre-installed on any device, promoted as a “zero-rated” service, or marketed as part of a specialized data plan.<p>5. not frame or otherwise reproduce significant portions of the Twitter service. You should display Twitter Content from the Twitter API.<p>",
+          "comments": []
+        },
+        {
+          "id": "8384989",
+          "level": 1,
+          "user": "ihuman",
+          "time_ago": "6 hours ago",
+          "content": "<p>I thought the API didn't have ads? That is why all 3rd party clients are twitter ad-free.",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "id": "8384631",
+      "level": 0,
+      "user": "turnersd",
+      "time_ago": "7 hours ago",
+      "content": "<p>Been using this for a while in a cron job to automate archiving tweets for various topics I'm interested in <a href=\"https://github.com/stephenturner/twitterchive\" rel=\"nofollow\">https://github.com/stephenturner/twitterchive</a>",
+      "comments": []
+    },
+    {
+      "id": "8384710",
+      "level": 0,
+      "user": "rsync",
+      "time_ago": "6 hours ago",
+      "content": "<p>I just skimmed and re-skimmed the usage examples on the page, and I see no option to actually tweet something.<p>I assume this has to do with the third party limit ?<p>",
+      "comments": [
+        {
+          "id": "8384728",
+          "level": 1,
+          "user": "Sir_Cmpwn",
+          "time_ago": "6 hours ago",
+          "content": "<p>t update \"I'm tweeting from the command line. Isn't that special?\"",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "id": "8384720",
+      "level": 0,
+      "user": "LeoPanthera",
+      "time_ago": "6 hours ago",
+      "content": "<p>Are there any command line twitter clients that allow the posting of images? ttytter can't do it, and it seems this \"t\" can't either.",
+      "comments": [
+        {
+          "id": "8384800",
+          "level": 1,
+          "user": "glimcat",
+          "time_ago": "6 hours ago",
+          "content": "<p>Well here's the essential bits in Python. I leave turning this into an actual CLI as an exercise for the interested reader.<p><pre><code>    from requests_oauthlib import OAuth1Session\n    import json\n\n\n    keys = json.loads(open(keyfile).read())\n    #  {\"TWITTER_CONSUMER_KEY\": \"blah_blah_blah\",\n    #   \"TWITTER_CONSUMER_SECRET\": \"blah_blah_blah\",\n    #   \"TWITTER_ACCESS_TOKEN\": \"blah_blah_blah\",\n    #   \"TWITTER_ACCESS_TOKEN_SECRET\": \"blah_blah_blah\",}\n\n\n    def twitter():\n        return OAuth1Session(keys['TWITTER_CONSUMER_KEY'],\n                             client_secret=keys['TWITTER_CONSUMER_SECRET'],\n                             resource_owner_key=keys['TWITTER_ACCESS_TOKEN'],\n                             resource_owner_secret=keys['TWITTER_ACCESS_TOKEN_SECRET'])\n\n\n    def tweet(status, reply_to=None):\n        endpoint = 'https://api.twitter.com/1.1/statuses/update.json'\n        data = {'status': status}\n        r = twitter().post(endpoint, data=data)\n        return r.status_code\n\n\n    def tweet_with_image(status, imgfile, reply_to=None):\n        endpoint = 'https://api.twitter.com/1.1/statuses/update_with_media.json'\n        data = {'status': status}\n        if reply_to is not None:\n            data.update({'in_reply_to_status_id': reply_to})\n        r = twitter().post(endpoint, data=data, files={'media[]': open(imgfile, 'rb').read()})\n        return r.status_code</code></pre>",
+          "comments": []
+        },
+        {
+          "id": "8384979",
+          "level": 1,
+          "user": "hayksaakian",
+          "time_ago": "6 hours ago",
+          "content": "<p>Actually you can, see:<p><a href=\"https://github.com/sferik/t/blob/7f1fcac61047dcb703e9519c837f7134fd7a7f57/lib/t/cli.rb#L843\" rel=\"nofollow\">https://github.com/sferik/t/blob/7f1fcac61047dcb703e9519c837...</a><p>this is because the OP's own twitter ruby gem can do that, this CLI app is basically a front end for the ruby gem<p><pre><code>    client.update_with_media(\"I'm tweeting with @gem!\", File.new(\"/path/to/media.png\"))\n</code></pre>\n<a href=\"https://github.com/sferik/twitter/blob/48efb642beaa19355a4c1ba04a9fadac54cfba42/examples/Update.md#L40\" rel=\"nofollow\">https://github.com/sferik/twitter/blob/48efb642beaa19355a4c1...</a>",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "id": "8385582",
+      "level": 0,
+      "user": "aftbit",
+      "time_ago": "4 hours ago",
+      "content": "<p>Anyone have a zsh completion file for t?",
+      "comments": [
+        {
+          "id": "8386026",
+          "level": 1,
+          "user": "rdc12",
+          "time_ago": "2 hours ago",
+          "content": "<p><a href=\"https://github.com/sferik/t/blob/master/etc/t-completion.zsh\" rel=\"nofollow\">https://github.com/sferik/t/blob/master/etc/t-completion.zsh</a>",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "id": "8384799",
+      "level": 0,
+      "user": "soapdog",
+      "time_ago": "6 hours ago",
+      "content": "<p>Very cool tool. Does anyone know of a similar one for Facebook?",
+      "comments": [
+        {
+          "id": "8384872",
+          "level": 1,
+          "user": "pdenya",
+          "time_ago": "6 hours ago",
+          "content": "<p>There's a privacy option to disable 3rd party app access (FB apps used by other people) to personal info so nothing as full featured is possible.",
+          "comments": [
+            {
+              "id": "8384884",
+              "level": 2,
+              "user": "soapdog",
+              "time_ago": "6 hours ago",
+              "content": "<p>thanks for the reply. I am not looking for all those features. I just want to update status from the command line this way I can use them in my static generator workflow ;-)",
+              "comments": [
+                {
+                  "id": "8385647",
+                  "level": 3,
+                  "user": "yeldarb",
+                  "time_ago": "4 hours ago",
+                  "content": "<p>I don't know of a generic tool that does this but you could create one in a couple of minutes in your scripting language of choice.<p>Go here and generate yourself a token for your account: <a href=\"https://developers.facebook.com/tools/explorer\" rel=\"nofollow\">https://developers.facebook.com/tools/explorer</a><p>Then do the equivalent of<p><pre><code>    curl -X POST -d \"message='Your status message goes here.'\" https://graph.facebook.com/me/feed?access_token=YOUR_TOKEN_HERE</code></pre>",
+                  "comments": []
+                },
+                {
+                  "id": "8385190",
+                  "level": 3,
+                  "user": "sefk",
+                  "time_ago": "5 hours ago",
+                  "content": "<p>I cross-post tweets to FB with this app: <a href=\"https://apps.facebook.com/twitter/\" rel=\"nofollow\">https://apps.facebook.com/twitter/</a>.  I wish it had a way not cross-post <i>everything</i>, i.e. with a #nofb tag, but my volume isn't high enough that that's a concern.",
+                  "comments": [
+                    {
+                      "id": "8385959",
+                      "level": 4,
+                      "user": "jcurbo",
+                      "time_ago": "2 hours ago",
+                      "content": "<p>There used to be a nice FB app called Selective Tweets that let you append #fb to tweets you wanted to show up on Facebook, but it doesn't seem to work anymore and seems un-maintained.",
+                      "comments": []
+                    }
+                  ]
+                },
+                {
+                  "id": "8386039",
+                  "level": 3,
+                  "user": "lmm",
+                  "time_ago": "2 hours ago",
+                  "content": "<p>The Facebook API is really nice (at least by the standards of such things) - if there isn't one now it should be straightforward to write.",
+                  "comments": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "more_comments_id": null
+}
