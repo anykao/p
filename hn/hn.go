@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/codegangsta/cli"
 	"io/ioutil"
 	"log"
@@ -13,21 +12,20 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/olekukonko/tablewriter"
 	"github.com/skratchdot/open-golang/open"
-
-	//"github.com/bndr/gopencils"
 )
 
 type Item struct {
-	CommentsCount float64 `json:"comments_count"`
-	Domain        string  `json:"domain"`
-	ID            string  `json:"id"`
-	Points        float64 `json:"points"`
-	TimeAgo       string  `json:"time_ago"`
-	Title         string  `json:"title"`
-	Type          string  `json:"type"`
-	URL           string  `json:"url"`
-	User          string  `json:"user"`
+	CommentsCount int    `json:"comments_count"`
+	Domain        string `json:"domain"`
+	ID            string `json:"id"`
+	Points        int    `json:"points"`
+	TimeAgo       string `json:"time_ago"`
+	Title         string `json:"title"`
+	Type          string `json:"type"`
+	URL           string `json:"url"`
+	User          string `json:"user"`
 }
 
 type Comment struct {
@@ -75,6 +73,16 @@ func getItem(cache string, idx int64) Item {
 	}
 	return items[idx-1]
 }
+func showNewsList(news []Item) {
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetColWidth(158)
+	table.SetHeader([]string{"Index", "Cmts", "Domain", "Title"})
+	for i, item := range news {
+		table.Append([]string{strconv.Itoa(i + 1), strconv.Itoa(item.CommentsCount), item.Domain, item.Title})
+	}
+	table.Render()
+}
 
 func main() {
 	usr, err := user.Current()
@@ -100,12 +108,7 @@ func main() {
 		populateCache(cache, bytes)
 		contents := string(bytes)
 		err = json.NewDecoder(strings.NewReader(contents)).Decode(&news)
-		if err != nil {
-			log.Fatal(err)
-		}
-		for i, item := range news {
-			fmt.Printf("[%d]%s\n", i+1, item.Title)
-		}
+		showNewsList(news)
 	}
 	app.Commands = []cli.Command{
 		{
@@ -142,9 +145,7 @@ func main() {
 				if err != nil {
 					log.Fatal(err)
 				}
-				for i, item := range news {
-					fmt.Printf("[%d]%s\n", i+1, item.Title)
-				}
+				showNewsList(news)
 			},
 		},
 		{
