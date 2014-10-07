@@ -125,7 +125,7 @@ func main() {
 					log.Fatal(err)
 				}
 				for i, item := range news {
-					fmt.Printf("[%d]%s\n", i, item.Title)
+					fmt.Printf("[%d]%s\n", i+1, item.Title)
 				}
 			},
 		},
@@ -151,7 +151,7 @@ func main() {
 					log.Fatal(err)
 				}
 				for i, item := range news {
-					fmt.Printf("[%d]%s\n", i, item.Title)
+					fmt.Printf("[%d]%s\n", i+1, item.Title)
 				}
 			},
 		},
