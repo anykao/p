@@ -87,13 +87,31 @@ func main() {
 	app.Name = "hn"
 	app.Usage = "hacker news under your finger."
 	app.Action = func(c *cli.Context) {
-		println("boom! I say!")
+		var news []Item
+		res, err := http.Get(NEWS)
+		if err != nil {
+			log.Fatal(err)
+		}
+		bytes, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		res.Body.Close()
+		populateCache(cache, bytes)
+		contents := string(bytes)
+		err = json.NewDecoder(strings.NewReader(contents)).Decode(&news)
+		if err != nil {
+			log.Fatal(err)
+		}
+		for i, item := range news {
+			fmt.Printf("[%d]%s\n", i+1, item.Title)
+		}
 	}
 	app.Commands = []cli.Command{
 		{
 			Name:      "view",
-			ShortName: "n",
-			Usage:     "add a task to the list",
+			ShortName: "v",
+			Usage:     "view news",
 			Action: func(c *cli.Context) {
 				idx, e := strconv.ParseInt(c.Args().First(), 0, 0)
 				if e != nil {
@@ -104,35 +122,9 @@ func main() {
 			},
 		},
 		{
-			Name:      "news",
-			ShortName: "2",
-			Usage:     "news",
-			Action: func(c *cli.Context) {
-				var news []Item
-				res, err := http.Get(NEWS)
-				if err != nil {
-					log.Fatal(err)
-				}
-				bytes, err := ioutil.ReadAll(res.Body)
-				if err != nil {
-					log.Fatal(err)
-				}
-				res.Body.Close()
-				populateCache(cache, bytes)
-				contents := string(bytes)
-				err = json.NewDecoder(strings.NewReader(contents)).Decode(&news)
-				if err != nil {
-					log.Fatal(err)
-				}
-				for i, item := range news {
-					fmt.Printf("[%d]%s\n", i+1, item.Title)
-				}
-			},
-		},
-		{
 			Name:      "news2",
-			ShortName: "next",
-			Usage:     "news2",
+			ShortName: "n",
+			Usage:     "show news2",
 			Action: func(c *cli.Context) {
 				var news []Item
 				res, err := http.Get(NEWS2)
@@ -157,8 +149,8 @@ func main() {
 		},
 		{
 			Name:      "comment",
-			ShortName: "2",
-			Usage:     "news2",
+			ShortName: "c",
+			Usage:     "show comment",
 			Action: func(c *cli.Context) {
 				idx, e := strconv.ParseInt(c.Args().First(), 0, 0)
 				if e != nil {
