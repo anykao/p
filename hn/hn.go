@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
-	"github.com/codegangsta/cli"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -17,6 +17,11 @@ import (
 
 	"github.com/skratchdot/open-golang/open"
 	"github.com/wsxiaoys/terminal/color"
+)
+
+var (
+	next    bool
+	comment bool
 )
 
 type Item struct {
@@ -102,6 +107,10 @@ func showNewsList(news []Item) {
 		fmt.Println()
 	}
 }
+func init() {
+	flag.BoolVar(&next, "n", false, "show new2.")
+	flag.BoolVar(&comment, "c", false, "show comment.")
+}
 func main() {
 	usr, err := user.Current()
 	if err != nil {
@@ -109,75 +118,53 @@ func main() {
 	}
 	cache := filepath.Join(usr.HomeDir, ".ak", "news")
 
-	app := cli.NewApp()
-	app.Name = "hn"
-	app.Usage = "hacker news under your finger."
-	app.Action = func(c *cli.Context) {
-		var news []Item
-		res, err := http.Get(NEWS)
-		if err != nil {
-			log.Fatal(err)
+	flag.Parse()
+	if flag.NArg() < 0 {
+		idx, e := strconv.ParseInt(flag.Arg(0), 0, 0)
+		if e != nil {
+			// not int
 		}
-		bytes, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			log.Fatal(err)
+		item := getItem(cache, idx)
+		if comment {
+			open.Start(HACKERWEB + "/#/item/" + item.ID)
+		} else {
+			open.Start(item.URL)
 		}
-		res.Body.Close()
-		populateCache(cache, bytes)
-		contents := string(bytes)
-		err = json.NewDecoder(strings.NewReader(contents)).Decode(&news)
-		showNewsList(news)
+
+	} else {
+		if next {
+			var news []Item
+			res, err := http.Get(NEWS2)
+			if err != nil {
+				log.Fatal(err)
+			}
+			bytes, err := ioutil.ReadAll(res.Body)
+			if err != nil {
+				log.Fatal(err)
+			}
+			res.Body.Close()
+			populateCache(cache, bytes)
+			contents := string(bytes)
+			err = json.NewDecoder(strings.NewReader(contents)).Decode(&news)
+			if err != nil {
+				log.Fatal(err)
+			}
+			showNewsList(news)
+		} else {
+			var news []Item
+			res, err := http.Get(NEWS)
+			if err != nil {
+				log.Fatal(err)
+			}
+			bytes, err := ioutil.ReadAll(res.Body)
+			if err != nil {
+				log.Fatal(err)
+			}
+			res.Body.Close()
+			populateCache(cache, bytes)
+			contents := string(bytes)
+			err = json.NewDecoder(strings.NewReader(contents)).Decode(&news)
+			showNewsList(news)
+		}
 	}
-	app.Commands = []cli.Command{
-		{
-			Name:      "view",
-			ShortName: "v",
-			Usage:     "view news",
-			Action: func(c *cli.Context) {
-				idx, e := strconv.ParseInt(c.Args().First(), 0, 0)
-				if e != nil {
-					log.Fatal(e)
-				}
-				item := getItem(cache, idx)
-				open.Start(item.URL)
-			},
-		},
-		{
-			Name:      "news2",
-			ShortName: "n",
-			Usage:     "show news2",
-			Action: func(c *cli.Context) {
-				var news []Item
-				res, err := http.Get(NEWS2)
-				if err != nil {
-					log.Fatal(err)
-				}
-				bytes, err := ioutil.ReadAll(res.Body)
-				if err != nil {
-					log.Fatal(err)
-				}
-				res.Body.Close()
-				populateCache(cache, bytes)
-				contents := string(bytes)
-				err = json.NewDecoder(strings.NewReader(contents)).Decode(&news)
-				if err != nil {
-					log.Fatal(err)
-				}
-				showNewsList(news)
-			},
-		},
-		{
-			Name:      "comment",
-			ShortName: "c",
-			Usage:     "show comment",
-			Action: func(c *cli.Context) {
-				idx, e := strconv.ParseInt(c.Args().First(), 0, 0)
-				if e != nil {
-					log.Fatal(e)
-				}
-				item := getItem(cache, idx)
-				open.Start(HACKERWEB + "/#/item/" + item.ID)
-			},
-		}}
-	app.Run(os.Args)
 }
