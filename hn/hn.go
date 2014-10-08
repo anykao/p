@@ -119,7 +119,7 @@ func main() {
 	cache := filepath.Join(usr.HomeDir, ".ak", "news")
 
 	flag.Parse()
-	if flag.NArg() < 0 {
+	if flag.NArg() > 0 {
 		idx, e := strconv.ParseInt(flag.Arg(0), 0, 0)
 		if e != nil {
 			// not int
