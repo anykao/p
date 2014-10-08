@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/codegangsta/cli"
 	"io/ioutil"
 	"log"
@@ -12,8 +13,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/olekukonko/tablewriter"
+	//"github.com/olekukonko/tablewriter"
+
 	"github.com/skratchdot/open-golang/open"
+	"github.com/wsxiaoys/terminal/color"
 )
 
 type Item struct {
@@ -73,17 +76,32 @@ func getItem(cache string, idx int64) Item {
 	}
 	return items[idx-1]
 }
+
+//func showNewsList(news []Item) {
+
+//table := tablewriter.NewWriter(os.Stdout)
+//table.SetColWidth(158)
+//table.SetHeader([]string{"Index", "Cmts", "Domain", "Title"})
+//for i, item := range news {
+//table.Append([]string{strconv.Itoa(i + 1), strconv.Itoa(item.CommentsCount), item.Domain, item.Title})
+//}
+//table.Render()
+//}
+
 func showNewsList(news []Item) {
-
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetColWidth(158)
-	table.SetHeader([]string{"Index", "Cmts", "Domain", "Title"})
 	for i, item := range news {
-		table.Append([]string{strconv.Itoa(i + 1), strconv.Itoa(item.CommentsCount), item.Domain, item.Title})
+		color.Print("@b", fmt.Sprintf("%2d", i+1))
+		fmt.Print(" ")
+		color.Print("@{!g}", item.Title)
+		fmt.Print(" ")
+		color.Print("@y", fmt.Sprintf("%dc", item.CommentsCount))
+		fmt.Print(" ")
+		color.Print("@m", fmt.Sprintf("%dp", item.Points))
+		fmt.Print(" ")
+		color.Print("@w", item.Domain)
+		fmt.Println()
 	}
-	table.Render()
 }
-
 func main() {
 	usr, err := user.Current()
 	if err != nil {
