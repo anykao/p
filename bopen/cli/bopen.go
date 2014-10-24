@@ -26,6 +26,6 @@ func main() {
 	nc.QueueSubscribe(TOPIC, QUEUE, func(m *nats.Msg) {
 		open.Start( string(m.Data))
 	})
-	time.Sleep(8 * time.Minute)
+	time.Sleep(8 * time.Hour)
 	logger.Println("end polling")
 }
