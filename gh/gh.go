@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -13,12 +14,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"bufio"
 
 	"github.com/PuerkitoBio/goquery"
 	. "github.com/azer/debug"
+	"github.com/anykao/bopen"
 	"github.com/google/go-github/github"
-	"github.com/skratchdot/open-golang/open"
 	"github.com/wsxiaoys/terminal/color"
 )
 
@@ -66,12 +66,13 @@ func view(repo string) {
 		cmd.Stderr = os.Stderr
 		cmd.Run()
 	} else {
-		open.Start(url)
+		op := bopen.NewOpener("url")
+		op.Open(url)
 	}
 }
 
 func populateCache(cache string, repos []github.Repository) {
-	e := os.MkdirAll(filepath.Dir(cache), 0666)
+	e := os.MkdirAll(filepath.Dir(cache), 0700)
 	if e != nil {
 		log.Fatal(e)
 	}
@@ -86,12 +87,12 @@ func populateCache(cache string, repos []github.Repository) {
 	}
 	f.Write(contents)
 }
-func trimMultiLineString(origin string)[]string{
-	var trimed [] string
+func trimMultiLineString(origin string) []string {
+	var trimed []string
 	scanner := bufio.NewScanner(strings.NewReader(origin))
 	for scanner.Scan() {
 		line := strings.Trim(scanner.Text(), " ")
-		if (line != ""){
+		if line != "" {
 			trimed = append(trimed, line)
 		}
 	}
@@ -161,7 +162,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			go func(){
+			go func() {
 				for _, repo := range result.Repositories {
 					repos <- repo
 				}
@@ -178,9 +179,9 @@ func main() {
 			if e != nil {
 				log.Fatal(e)
 			}
-			go func(){
+			go func() {
 				doc.Find("li.repo-list-item").Each(func(i int, s *goquery.Selection) {
-					name := strings.Join(trimMultiLineString(s.Find("h3.repo-list-name a").Text()),"")
+					name := strings.Join(trimMultiLineString(s.Find("h3.repo-list-name a").Text()), "")
 					lang := trimMultiLineString(s.Find(".repo-list-meta").Text())[0]
 					desc := strings.Trim(s.Find(".repo-list-description").Text(), "\n ")
 					repo := github.Repository{FullName: &name, Description: &desc, Language: &lang}
@@ -199,4 +200,3 @@ func main() {
 		populateCache(cache, repoArr)
 	}
 }
-
