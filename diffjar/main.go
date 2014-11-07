@@ -4,15 +4,15 @@ import (
 	"archive/zip"
 	"bytes"
 	"fmt"
-	_ "net/http/pprof"
 	log "github.com/Sirupsen/logrus"
+	_ "net/http/pprof"
 	//"github.com/kr/pretty"
 	"github.com/mholt/binding"
 	"github.com/pmezard/go-difflib/difflib"
+	"github.com/skratchdot/open-golang/open"
 	"github.com/zenazn/goji"
 	"github.com/zenazn/goji/web"
 	"gopkg.in/unrolled/render.v1"
-	"github.com/skratchdot/open-golang/open"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
@@ -30,18 +30,19 @@ var err error
 const (
 	// Version number
 	VERSION = "0.01"
-
 	// Scan at up to this size in file for '\0' in test for binary file
 	BINARY_CHECK_SIZE = 65536
 	// default number of context lines to display
-	CONTEXT_LINES = 3
-	MSG_BIN_FILE_DIFFERS = "File differs. This is a binary file"
+	CONTEXT_LINES        = 3
+	// SEPARATOR
+	JAR_SEPARATOR = "+++++++++++++++++++++++++++++++++++++++++++"
 )
 
 type Config struct {
 	FileA *multipart.FileHeader
 	FileB *multipart.FileHeader
-	Verbose *bool
+	Brief bool
+	Skip  string
 }
 
 // Then provide a field mapping (pointer receiver is vital)
@@ -49,7 +50,8 @@ func (conf *Config) FieldMap() binding.FieldMap {
 	return binding.FieldMap{
 		&conf.FileA: "file-a",
 		&conf.FileB: "file-b",
-		&conf.Verbose: "verbose",
+		&conf.Brief: "brief",
+		&conf.Skip:  "skip",
 	}
 }
 
@@ -65,7 +67,15 @@ func init() {
 		log.Fatal(err)
 	}
 }
-func DiffContent(zipa, zipb *zip.Reader) string {
+func isSkiping(name string, prefix []string) bool {
+	for _, p := range prefix {
+		if strings.HasPrefix(name, p) {
+			return true
+		}
+	}
+	return false
+}
+func DiffContent(zipa, zipb *zip.Reader, brief bool, skips []string) string {
 	var buf bytes.Buffer
 	rightFileSet := make(map[string]struct{})
 	for _, f := range zipb.File {
@@ -83,53 +93,64 @@ func DiffContent(zipa, zipb *zip.Reader) string {
 				data1, _ := ioutil.ReadAll(a1)
 				data2, _ := ioutil.ReadAll(b1)
 				if !bytes.Equal(data1, data2) {
-					fmt.Fprintln(&buf,a.Name)
-					if strings.HasSuffix(a.Name,"jar") {
+					fmt.Fprintf(&buf, "ファイル %s は異なります\n", a.Name)
+					if brief {
+						break
+					}
+					if isSkiping(a.Name, skips) {
+						break
+					}
+					if strings.HasSuffix(a.Name, "jar") {
+						fmt.Fprintln(&buf, JAR_SEPARATOR)
 						zipa, err := zip.NewReader(bytes.NewReader(data1), int64(len(data1)))
-						if (err != nil){
+						if err != nil {
 							log.Fatal(err)
 						}
 						zipb, err := zip.NewReader(bytes.NewReader(data2), int64(len(data2)))
-						if (err != nil){
+						if err != nil {
 							log.Fatal(err)
 						}
-						diff := DiffContent(zipa, zipb)
+						diff := DiffContent(zipa, zipb, brief, nil)
 						fmt.Fprintf(&buf, diff)
-					} else if (!strings.HasSuffix(a.Name, "class") && check_binary(data1)) {
-						fmt.Fprintln(&buf, MSG_BIN_FILE_DIFFERS)
-					} else{
-						var leftLines, rightLines []string
-						if strings.HasSuffix(a.Name, "class") {
-							leftLines = difflib.SplitLines(string(jadfile(data1)))
-							rightLines = difflib.SplitLines(string(jadfile(data2)))
-						} else {
-							leftLines = difflib.SplitLines(string(data1))
-							rightLines = difflib.SplitLines(string(data2))
-						}
-						diff := difflib.UnifiedDiff{
-							A:        leftLines,
-							B:        rightLines,
-							FromFile: "File A",
-							ToFile:   "File B",
-							Context:  3,
-						}
-						text, _ := difflib.GetUnifiedDiffString(diff)
-						fmt.Fprint(&buf,text)
+						fmt.Fprintln(&buf, JAR_SEPARATOR)
+					} else if strings.HasSuffix(a.Name, "class") {
+						diff := godiff(string(jadfile(data1)), string(jadfile(data2)))
+						fmt.Fprintf(&buf, diff)
+					} else if check_binary(data1) {
+						fmt.Fprintln(&buf, "<<binary>>")
+					} else {
+						diff := godiff(string(data1), string(data2))
+						fmt.Fprint(&buf, diff)
 					}
 				}
 				break
 			}
 		}
 		if !hitFlag {
-			fmt.Fprintf(&buf, "%s only in the left file.\n", a.Name)
+			fmt.Fprintf(&buf, "Aだけに発見: %s\n", a.Name)
 		}
 	}
 	if len(rightFileSet) != 0 {
 		for f := range rightFileSet {
-			fmt.Fprintf(&buf,"%s only in the right file.\n", f)
+			fmt.Fprintf(&buf, "Bだけに発見: %s\n", f)
 		}
 	}
 	return buf.String()
+}
+func godiff(a, b string) string {
+	diff := difflib.UnifiedDiff{
+		A:        difflib.SplitLines(a),
+		B:        difflib.SplitLines(b),
+		FromFile: "File A",
+		ToFile:   "File B",
+		Context:  3,
+	}
+	text, err := difflib.GetUnifiedDiffString(diff)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return text
+
 }
 
 func console() {
@@ -141,7 +162,7 @@ func console() {
 	jar2, _ := zip.OpenReader(os.Args[2])
 	defer jar1.Close()
 	defer jar2.Close()
-	DiffContent(&jar1.Reader, &jar2.Reader)
+	DiffContent(&jar1.Reader, &jar2.Reader, true, nil)
 }
 func jadfile(data []byte) []byte {
 	fclass := filepath.Join(tempDir, "tmp.class")
@@ -165,7 +186,7 @@ func index(c web.C, w http.ResponseWriter, r *http.Request) {
 	ren.HTML(w, http.StatusOK, "index", nil)
 }
 func PostDiff(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
 	//fmt.Printf("%# v", pretty.Formatter(r))
 	conf := new(Config)
 	errs := binding.Bind(r, conf)
@@ -173,32 +194,46 @@ func PostDiff(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fa, err := conf.FileA.Open()
-	if (err != nil){
+	if err != nil {
 		log.Fatal(err)
 	}
 	fb, err := conf.FileB.Open()
-	if (err != nil){
+	if err != nil {
 		log.Fatal(err)
 	}
 	readFromA, err := ioutil.ReadAll(fa)
-	if (err != nil){
+	if err != nil {
 		log.Fatal(err)
 	}
 	readFromB, err := ioutil.ReadAll(fb)
-	if (err != nil){
+	if err != nil {
 		log.Fatal(err)
 	}
 
 	zipa, err := zip.NewReader(fa, int64(len(readFromA)))
-	if (err != nil){
+	if err != nil {
 		log.Fatal(err)
 	}
 	zipb, err := zip.NewReader(fb, int64(len(readFromB)))
-	if (err != nil){
+	if err != nil {
 		log.Fatal(err)
 	}
-	diff := DiffContent(zipa, zipb)
-	fmt.Fprint(w, "verbose: ", conf.Verbose)
+	skip := strings.TrimSpace(conf.Skip)
+	var prefix []string
+	if skip != "" {
+		skips := strings.Split(skip, "\n")
+		for _, s := range skips {
+			s = strings.TrimSpace(s)
+			if s != "" {
+				if !strings.HasSuffix(s, "/") {
+					s = s + "/"
+				}
+				prefix = append(prefix, s)
+			}
+		}
+
+	}
+	diff := DiffContent(zipa, zipb, conf.Brief, prefix)
 	fmt.Fprintf(w, diff)
 }
 
@@ -228,7 +263,7 @@ func site() {
 	goji.Post("/diff", PostDiff)
 	//Fully backwards compatible with net/http's Handlers
 	//goji.Get("/result", http.RedirectHandler("/", 301))
-	time.AfterFunc(500*time.Millisecond, func(){
+	time.AfterFunc(500*time.Millisecond, func() {
 		open.Start("http://localhost:8000")
 	})
 	goji.Serve()

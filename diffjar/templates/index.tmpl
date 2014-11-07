@@ -11,8 +11,8 @@
 <style>
 textarea { resize:vertical; }
 body {
-padding-top: 100px;
-padding-bottom: 100px;
+padding-top: 50px;
+padding-bottom: 50px;
 }
 </style>
 </head>
@@ -35,9 +35,14 @@ padding-bottom: 100px;
     </div>
     <div class="checkbox">
       <label>
-        <input type="checkbox" value="verbose"> Verbose
+        <input type="checkbox" name="brief" value="1" checked> サマリ
       </label>
-      <p class="help-block">差異ファイルの中身を比較する</p>
+      <p class="help-block">差異ファイルの中身を比較しない</p>
+    </div>
+    <div class="form-group">
+      <label for="skip">スキップ</label>
+      <textarea id="skip" placeholder="MailMessenger/docs/javadoc" class="form-control" name="skip" rows="3"></textarea>
+      <p class="help-block">該当ディレクトリ配下ファイルの中身を比較しない</p>
     </div>
     <button type="submit" class="btn btn-primary">比較</button>
     <button type="reset" class="btn btn-warning">リセット</button>
