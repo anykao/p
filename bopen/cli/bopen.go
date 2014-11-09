@@ -20,7 +20,7 @@ func main() {
 		log.Panic(err)
 	}
 	logger := log.New(f, "logger: ", log.Lshortfile)
-	nc, _ := nats.Connect("nats://172.17.106.112:4222")
+	nc, _ := nats.Connect("nats://yourhost:4222")
 	defer nc.Close()
 	logger.Println("start polling url")
 	nc.QueueSubscribe(TOPIC, QUEUE, func(m *nats.Msg) {
