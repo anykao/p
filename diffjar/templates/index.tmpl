@@ -20,9 +20,9 @@ padding-bottom: 50px;
 <div class="container">
 <div class="col-md-4 col-md-offset-4">
 <div class="panel panel-primary well">
-  <div class="panel-heading">圧縮ファイル(zip,jar)比較</div>
-  <div class="panel-body">
-<form role="form" method="POST" action="/diff" enctype="multipart/form-data">
+<div class="panel-heading">圧縮ファイル(zip,jar)比較</div>
+<div class="panel-body">
+<form id="myform" role="form" method="POST" action="/diff" enctype="multipart/form-data">
     <div class="form-group">
       <label for="file-a">File A</label>
       <input type="file" id="file-a" name="file-a" required>
@@ -44,10 +44,11 @@ padding-bottom: 50px;
       <textarea id="skip" placeholder="MailMessenger/docs/javadoc" class="form-control" name="skip" rows="3"></textarea>
       <p class="help-block">該当ディレクトリ配下ファイルの中身を比較しない</p>
     </div>
-    <button type="submit" class="btn btn-primary">比較</button>
-    <button type="reset" class="btn btn-warning">リセット</button>
+    <button id="submit" type="submit" class="btn btn-primary">比較</button>
+    <button id="reset" type="reset" class="btn btn-warning">リセット</button>
+    <div id="in_progress" style="display:none">Please wait, diff is executing...</div>
 </form>
-  </div>
+</div>
 </div>
 </div>
 </div>
@@ -55,5 +56,17 @@ padding-bottom: 50px;
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<!--<script>-->
+<!--$(document).ready(function() {-->
+        <!--$("#in_progress").hide();-->
+        <!--$("#submit").on("click", function(e) {-->
+            <!--if ($("#file-a").val() != "" && $("#file-b").val() != "") {-->
+                    <!--$("#in_progress").show();-->
+                    <!--$("#submit, #reset").prop("disabled", true);-->
+                    <!--$("#myform").submit();-->
+                <!--}-->
+            <!--});-->
+        <!--});-->
+<!--</script>-->
 </body>
 </html>
