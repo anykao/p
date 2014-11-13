@@ -1,9 +1,8 @@
 package main
 
 import (
-	"log"
-	"os"
-	"time"
+	"fmt"
+	//"os.signal"
 	"github.com/apcera/nats"
 	"github.com/skratchdot/open-golang/open"
 	//"github.com/rakyll/coop"
@@ -15,17 +14,12 @@ const(
 )
 
 func main() {
-	f,err := os.Create("opener.log")
-	if err != nil{
-		log.Panic(err)
-	}
-	logger := log.New(f, "logger: ", log.Lshortfile)
 	nc, _ := nats.Connect("nats://172.17.106.112:4222")
 	defer nc.Close()
-	logger.Println("start polling url")
 	nc.QueueSubscribe(TOPIC, QUEUE, func(m *nats.Msg) {
+		fmt.Println(string(m.Data))
 		open.Start( string(m.Data))
 	})
-	time.Sleep(8 * time.Hour)
-	logger.Println("end polling")
+	select {
+	}
 }
