@@ -14,7 +14,7 @@ const(
 )
 
 func main() {
-	nc, _ := nats.Connect("nats://172.17.106.112:4222")
+	nc, _ := nats.Connect("nats://yourhost:4222")
 	defer nc.Close()
 	nc.QueueSubscribe(TOPIC, QUEUE, func(m *nats.Msg) {
 		fmt.Println(string(m.Data))
