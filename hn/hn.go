@@ -27,7 +27,7 @@ var (
 type Item struct {
 	CommentsCount int    `json:"comments_count"`
 	Domain        string `json:"domain"`
-	ID            string `json:"id"`
+	ID            int    `json:"id"`
 	Points        int    `json:"points"`
 	TimeAgo       string `json:"time_ago"`
 	Title         string `json:"title"`
@@ -39,7 +39,7 @@ type Item struct {
 type Comment struct {
 	Comments []Comment `json:"comments"`
 	Content  string    `json:"content"`
-	ID       string    `json:"id"`
+	ID       int       `json:"id"`
 	Level    float64   `json:"level"`
 	TimeAgo  string    `json:"time_ago"`
 	User     string    `json:"user"`
@@ -126,7 +126,7 @@ func main() {
 		}
 		item := getItem(cache, idx)
 		if comment {
-			open.Start(HACKERWEB + "/#/item/" + item.ID)
+			open.Start(fmt.Sprintf("%s%s%d", HACKERWEB, "/#/item/", item.ID))
 		} else {
 			open.Start(item.URL)
 		}
