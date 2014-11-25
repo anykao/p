@@ -1,72 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>diff</title>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>diff</title>
 
-<!-- Bootstrap -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
-<style>
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+        <style>
 textarea { resize:vertical; }
 body {
-padding-top: 50px;
-padding-bottom: 50px;
+    padding-top: 50px;
+    padding-bottom: 50px;
 }
-</style>
-</head>
-<body>
-<div class="container">
-<div class="col-md-4 col-md-offset-4">
-<div class="panel panel-primary well">
-<div class="panel-heading">圧縮ファイル(zip,jar)比較</div>
-<div class="panel-body">
-<form id="myform" role="form" method="POST" action="/diff" enctype="multipart/form-data">
-    <div class="form-group">
-      <label for="file-a">File A</label>
-      <input type="file" id="file-a" name="file-a" required>
-      <p class="help-block">比較対象ファイルA</p>
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="panel panel-primary well">
+                    <div class="panel-heading">圧縮ファイル(zip,jar)比較</div>
+                    <div class="panel-body">
+                        <div role="tabpanel">
+
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#file-data" aria-controls="file-data" role="tab" data-toggle="tab">File</a></li>
+                                <li role="presentation"><a href="#file-path" aria-controls="file-path" role="tab" data-toggle="tab">Path</a></li>
+                            </ul>
+                            <form id="myform" role="form" method="POST" action="/diff" enctype="multipart/form-data">
+                                <div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane active" id="file-data">
+                                        <div class="form-group">
+                                            <label for="file-a">File A</label>
+                                            <input type="file" id="file-a" name="file-a">
+                                            <p class="help-block">比較対象ファイルA</p>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="file-b">File B</label>
+                                            <input type="file" id="file-b" name="file-b">
+                                            <p class="help-block">比較対象ファイルB</p>
+                                        </div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane" id="file-path">
+                                        <div>
+                                            <label for="filepath-a">File A</label>
+                                        </div>
+                                        <input type="text" class="form-control" id="filepath-a" name="filepath-a">
+                                        <p class="help-block">比較対象ファイルAのパス</p>
+
+                                        <div>
+                                            <label for="filepath-b">File B</label>
+                                        </div>
+                                        <input type="text" class="form-control" id="filepath-b" name="filepath-b">
+                                        <p class="help-block">比較対象ファイルBのパス</p>
+                                    </div>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="brief" value="1"> サマリ
+                                    </label>
+                                    <p class="help-block">差異ファイルの中身を比較しない</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="skip">スキップ</label>
+                                    <textarea id="skip" class="form-control" name="skip" rows="3">javadoc</textarea>
+                                    <p class="help-block">該当ディレクトリ配下ファイルの中身を比較しない</p>
+                                </div>
+                                <button id="submit" type="submit" class="btn btn-primary">比較</button>
+                                <button id="reset" type="reset" class="btn btn-warning">リセット</button>
+                                <div id="in-progress" style="display:none">Please wait, diff is executing...</div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-      <label for="file-b">File B</label>
-      <input type="file" id="file-b" name="file-b" required>
-      <p class="help-block">比較対象ファイルB</p>
-    </div>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" name="brief" value="1" checked> サマリ
-      </label>
-      <p class="help-block">差異ファイルの中身を比較しない</p>
-    </div>
-    <div class="form-group">
-      <label for="skip">スキップ</label>
-      <textarea id="skip" placeholder="MailMessenger/docs/javadoc" class="form-control" name="skip" rows="3"></textarea>
-      <p class="help-block">該当ディレクトリ配下ファイルの中身を比較しない</p>
-    </div>
-    <button id="submit" type="submit" class="btn btn-primary">比較</button>
-    <button id="reset" type="reset" class="btn btn-warning">リセット</button>
-    <div id="in_progress" style="display:none">Please wait, diff is executing...</div>
-</form>
-</div>
-</div>
-</div>
-</div>
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<!--<script>-->
-<!--$(document).ready(function() {-->
-        <!--$("#in_progress").hide();-->
-        <!--$("#submit").on("click", function(e) {-->
-            <!--if ($("#file-a").val() != "" && $("#file-b").val() != "") {-->
-                    <!--$("#in_progress").show();-->
-                    <!--$("#submit, #reset").prop("disabled", true);-->
-                    <!--$("#myform").submit();-->
-                <!--}-->
-            <!--});-->
-        <!--});-->
-<!--</script>-->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script>
+$(document).ready(function() {
+        $("#in-progress").hide();
+        $('#myform').submit(function() {
+            $("#in-progress").show();
+            $("#submit, #reset").prop("disabled", true);
+            });
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            $("#reset").click();
+            $.each($(".tab-pane"), function(i, obj){
+                if($(obj).hasClass("active")){
+                $.each($(obj).children("input"), function(i, child){
+                    $(child).attr("required", true)
+                    })
+                }else{
+                $.each($(obj).children("input"), function(i, child){
+                    $(child).attr("required", false)
+                    })
+                }
+                });
+            })
+});
+    </script>
 </body>
 </html>
