@@ -243,13 +243,37 @@ func jadfile(data []byte) []byte {
 	return bufOut.Bytes()
 }
 
+// readerのレングス取得
+func getReaderLength(r io.Reader) (length int64){
+
+	bufsize := 32 << 10 // 1M
+
+	var buf = make([]byte, bufsize)
+
+	defer func(){
+		log.Info(length)
+	}()
+
+	for {
+		n, err := r.Read(buf)
+		length = length + int64(n)
+		if err == io.EOF{
+			return
+		} else if err != nil{
+			log.Fatal(err)
+		}
+	}
+
+}
+
 func ReadZip(data ZipSrc) (*zip.Reader, error) {
-	content, err := ioutil.ReadAll(data)
+	//content, err := ioutil.ReadAll(data)
+	length := getReaderLength(data)
 	if err != nil {
 		return nil, err
 	}
 
-	zr, err := zip.NewReader(data, int64(len(content)))
+	zr, err := zip.NewReader(data, length)
 	if err != nil {
 		return nil, err
 	}
@@ -402,7 +426,6 @@ func webui() {
 	goji.Get("/", index)
 	goji.Get("/result/diff.txt", generateResult)
 	goji.Post("/diff", PostDiff)
-	goji.Get("/public/", http.FileServer(http.Dir("public")))
 	//Fully backwards compatible with net/http's Handlers
 	//goji.Get("/result", http.RedirectHandler("/", 301))
 	if os.Getenv("DEBUG") == "" {
