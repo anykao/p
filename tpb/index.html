@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>hello</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+</head>
+<body>
+
+  <div class="content">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>ai</th>
+        <th>name</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>hello</td>
+        <td>world</td>
+        <td>
+          <button class="btn btn-info btn-xs" data-clipboard-text="world">
+            <!--<span class="glyphicon glyphicon-copy" aria-hidden="true"></span>-->
+            copy
+          </button>
+        </td>
+
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>hello</td>
+        <td>meng</td>
+        <td>
+          <button class="btn btn-info btn-xs" data-clipboard-text="meng">
+            <!--<span class="glyphicon glyphicon-copy" aria-hidden="true"></span>-->
+            copy
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- 2. Include library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.3/clipboard.min.js"></script>
+
+  <!-- 3. Instantiate clipboard by passing a string selector -->
+  <script>
+    var clipboard = new Clipboard('.btn');
+    clipboard.on('success', function(e) {
+      console.log(e);
+    });
+    clipboard.on('error', function(e) {
+      console.log(e);
+    });
+  </script>
+</body>
+</html>
