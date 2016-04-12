@@ -1,0 +1,12 @@
+[package]
+name = "hn"
+version = "0.1.0"
+authors = ["anykao <600913@gmail.com>"]
+
+[dependencies]
+hyper = "0.8.0"
+rustc-serialize = "0.3"
+clippy = "*"
+
+[dependencies.rustbox]
+git = "https://github.com/gchp/rustbox.git"
